@@ -1,0 +1,31 @@
+{
+  "name": "ticketing",
+  "version": "1.0.0",
+  "description": "Back-end for a ticketing solution",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "author": "Richard Abayomi",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.1.3",
+    "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "got": "^12.5.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.6.5",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^2.0.20",
+    "paystack-api": "^2.0.6",
+    "request": "^2.88.2",
+    "short-unique-id": "^4.4.4",
+    "simple-body-validator": "^1.2.4",
+    "twilio": "^3.82.2",
+    "uuid": "^9.0.0"
+  }
+}
