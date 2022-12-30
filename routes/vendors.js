@@ -2,7 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const User = require("../model/user");
 const Vendorwallet = require("../model/vendorwallet");
-const Vendor = require("../model/vendors");
+const Vtransaction = require("../model/vendortransactions");
+const Vendor = require("../model/vendors")
+const Ticket = require("../model/tickets");
+const cTicket = require("../model/consumedtickets")
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const twilio = require('twilio');
@@ -176,6 +179,61 @@ app.post("/update-password",auth,async (req, res) => {
             vendor.save();
             res.send({error:false,msg:'password updated',vendor});
 } 
+});
+
+app.post("/withdraw/:id",auth,async (req, res) => {
+
+    const rules = {
+        amount: 'required|string',
+        
+    }
+    const validator = make(req.body, rules);
+    if (! validator.validate()) {
+        return res.send({errors:validator.errors().all()});
+     }else{
+        const {amount} = req.body;
+        const id = req.params.id;
+
+        const wallet = await Vendorwallet.findOne({id});
+
+        if(!wallet){
+            res.send("wallet not found");
+        }else{
+            const transaction = await Vtransaction.create({vendor:id,amount,type:"debit"});
+            Object.assign(wallet,{amount:wallet.amount -  amount});
+            wallet.save();
+            res.send({error:false,msg:amount +' withdrawn',wallet});
+        }
+
+} 
+});
+
+app.get("/ticket-history/:id",async (req, res) => {
+
+        const  id  = req.params.id;
+        const vendor  = await Vendor.findOne({consumedby:id});
+        if(!vendor){
+            res.send({error:true,msg:"Vendor not found"});
+        }else{
+        const tickets = await cTicket.find({consumedby:id});
+        res.send({error:false,tickets});
+        }
+        res.send({tickets});
+});
+
+app.get("/transaction-history/:id",async (req, res) => {
+
+
+
+    const id  = req.params.id;
+    const vendor  = await Vendor.findOne({id});
+    console.log(id);
+    if(!vendor){
+        res.send({error:true,msg:"Vendor not found",id});
+    }else{
+    const transactions = await Vtransaction.find({vendor:id});
+    res.send({error:false,transactions});
+    }
 });
 
 

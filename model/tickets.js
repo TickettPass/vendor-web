@@ -6,7 +6,6 @@ const ticketSchema = new mongoose.Schema({
   purpose: { type: String},
   uniquecode: { type: String},
   status: { type: String, default: "pending"},
-  consumedby: { type: String, default: null},
   datecreated:{ type: Date, default: Date.now()}
 },
 {

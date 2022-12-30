@@ -1,7 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const Ticket = require("../model/tickets");
+const cTicket = require("../model/consumedtickets")
 const Vendorwallet = require("../model/vendorwallet");
+const Vtransaction = require("../model/vendortransactions");
 const Transaction = require("../model/transaction");
 const Wallet = require("../model/wallet");
 const twilio = require('twilio');
@@ -76,24 +78,16 @@ app.delete("/delete/:id",async (req,res) => {
     }
 })
 
-app.post("/consume",async (req,res) => {
+app.post("/consume/:uc/:id",async (req,res) => {
     try {
-        const rules = {
-            uniquecode: 'required|string',
-            vendorid: 'required|string',
-        }
-
-        const validator = make(req.body,rules);
-        if (! validator.validate()) {
-            return res.send({errors:validator.errors().all()});
-         }else{
-            
-            const { uniquecode,vendorid } = req.body;
+           
+            const uniquecode = req.params.uc;
+            const vendorid = req.params.id
             const ticket = await Ticket.findOne({ uniquecode });
             if(!ticket){
                 res.send({error:true,msg:'Ticket not found'});
             }else{
-                console.log('ping');
+ 
                 if(ticket.status == 'consumed'){
                     res.send({error:true,msg:'This ticket is already used'});
                 }else{
@@ -107,16 +101,23 @@ app.post("/consume",async (req,res) => {
                             console.log(ticketamount+vendorwallet.amount);
                             Object.assign(vendorwallet,{amount:ticketamount+vendorwallet.amount});
                             vendorwallet.save();
+                            const vtransaction =await Vtransaction.create({vendor:vendorid,amount:ticketamount,type:"credit"});
+                            Object.assign(ticket,{status:"consumed"});
+                            ticket.save();
+                            await cTicket.create({uniquecode,consumedby:vendorid});
+
+                            res.send({error:false,msg:'Ticket consumed',ticket,vtransaction});
                         } catch (error) {
-                            res.send({error:true,msg:'error updating vendor wallet'});
+
+                            res.send({error:error,msg:'error updating vendor wallet'});
                         }
-                    Object.assign(ticket,{status:'consumed',consumedby:vendorid});
-                    ticket.save();
-                    res.send({error:false,msg:'Ticket consumed',ticket});
+                        
+                        
+                        
                     }
                     
                 }
-            }
+            
          }
     } catch (error) {
 
