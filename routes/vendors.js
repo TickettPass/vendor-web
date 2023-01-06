@@ -204,7 +204,6 @@ app.post("/withdraw/:id",auth,async (req, res) => {
             wallet.save();
             res.send({error:false,msg:amount +' withdrawn',wallet});
         }
-
 } 
 });
 
@@ -218,13 +217,9 @@ app.get("/ticket-history/:id",async (req, res) => {
         const tickets = await cTicket.find({consumedby:id});
         res.send({error:false,tickets});
         }
-        res.send({tickets});
 });
 
 app.get("/transaction-history/:id",async (req, res) => {
-
-
-
     const id  = req.params.id;
     const vendor  = await Vendor.findOne({id});
     console.log(id);

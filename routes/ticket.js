@@ -124,8 +124,8 @@ app.post("/consume/:uc/:id",async (req,res) => {
     }
 })
 
-app.get("/find/",async (req,res) => {
-    const { id } = req.body;
+app.get("/find/:id",async (req,res) => {
+    const id  = req.params.id;
     const tickets = await Ticket.find({user:id})
     res.send({error:false,tickets})
 });
