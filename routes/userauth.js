@@ -8,6 +8,8 @@ const twilio = require('twilio');
 const auth = require("../middleware/auth");
 const { make } = require('simple-body-validator');
 const { v4: uuidv4 } = require('uuid');
+const Ticket = require("../model/tickets");
+const Transaction = require("../model/transaction");
 
 
 
@@ -219,4 +221,29 @@ app.post("/update-password",auth,async (req, res) => {
          }
    
 });
+
+app.get("/ticket-history/:id",async (req, res) => {
+
+    const  id  = req.params.id;
+    const user  = await User.findOne({id});
+    if(!user){
+        res.send({error:true,msg:"User not found",id});
+    }else{
+    const tickets = await Ticket.find({user:id});
+    res.send({error:false,tickets});
+    }
+});
+
+app.get("/transaction-history/:id",async (req, res) => {
+const id  = req.params.id;
+const user  = await User.findOne({id});
+if(!user){
+    res.send({error:true,msg:"user not found",id});
+}else{
+const transactions = await Transaction.find({user:id});
+res.send({error:false,transactions});
+}
+});
+
+
 module.exports = app;
