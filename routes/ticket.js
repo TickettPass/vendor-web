@@ -80,7 +80,7 @@ app.post("/new-cab",async (req,res) => {
         if (! validator.validate()) {
             return res.send({errors:validator.errors().all()});
          }else{
-
+            console.log('for uniquesness');
             const { user,amount,driver } = req.body;
             const uid = new ShortUniqueId({ length: 8 });
             const uniquecode = uid();
