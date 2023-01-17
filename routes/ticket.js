@@ -10,14 +10,19 @@ const twilio = require('twilio');
 const auth = require("../middleware/auth");
 const { make } = require('simple-body-validator');
 const ShortUniqueId = require('short-unique-id');
+const Driver = require('../model/bowendrivers');
+const Dwallet = require('../model/bowendriverswallet');
+
 
 let app = express.Router();
+const accountSid = 'ACc837fae39258cf7e3ad0c965c7f48bf7';
+const authToken = 'd13339360106662b7a945a4f5a4557e3';
+const client = new twilio(accountSid, authToken);
 
-app.post("/new",async (req,res) => {
+app.post("/new-meal",async (req,res) => {
 
         const rules = {
             user: 'required|string',
-            purpose: 'required|string',
             amount: 'required|string'
         }
 
@@ -26,7 +31,7 @@ app.post("/new",async (req,res) => {
             return res.send({errors:validator.errors().all()});
          }else{
 
-            const { user,purpose,amount } = req.body;
+            const { user,amount } = req.body;
             const uid = new ShortUniqueId({ length: 8 });
             const uniquecode = uid();
             console.log('uniquecode',uniquecode);
@@ -43,13 +48,75 @@ app.post("/new",async (req,res) => {
                 }else{
                     const ticket = await Ticket.create({
                         user,
-                        purpose,
+                        purpose:"meal",
                         amount,
                         uniquecode
                     })
                     const balance = wallet.amount - amount;
                     Object.assign(wallet,{amount:balance});
                     wallet.save();
+                    const transaction = await Transaction.create({
+                        user,
+                        amount,
+                        type:'debit',
+                        reference:uniquecode
+                    });
+                    res.send({error:false,data:{ticket,transaction}});
+    
+                }
+            }
+         }
+});
+
+app.post("/new-cab",async (req,res) => {
+
+        const rules = {
+            user: 'required|string',
+            driver: 'required|string',
+            amount: 'required|string'
+        }
+
+        const validator = make(req.body,rules);
+        if (! validator.validate()) {
+            return res.send({errors:validator.errors().all()});
+         }else{
+
+            const { user,amount,driver } = req.body;
+            const uid = new ShortUniqueId({ length: 8 });
+            const uniquecode = uid();
+
+
+            const wallet = await Wallet.findOne({ id:user });
+            if(!wallet){
+                res.send({error:true,msg:'User not found'})
+            }else{
+                
+                if(wallet.amount < amount){
+                    res.send({error:true,msg:"Insuffient funds"});
+                }else{
+                    const ticket = await Ticket.create({
+                        user,
+                        purpose:"cab",
+                        amount,
+                        driver,
+                        uniquecode
+                    })
+                    const balance = wallet.amount - amount;
+                    Object.assign(wallet,{amount:balance});
+                    wallet.save();
+
+                    const dnumber = await Driver.findOne({ number});
+                    const dwallet = await Dwallet.findOne({ id:dnumber.id });
+
+                    const dbalance = dwallet.amount + amount;
+                    Object.assign(dwallet,{amount:dbalance});
+                    dwallet.save();
+
+                    
+                    client.messages
+                    .create({body:amount+'cab ticket purchased by' + user + 'for mr '+ dnumber.name , from: '+16516615073', to: dnumber.number})
+                    .then(message => console.log(message.sid));
+
                     const transaction = await Transaction.create({
                         user,
                         amount,
@@ -70,11 +137,11 @@ app.delete("/delete/:id",async (req,res) => {
             res.send({error:true,msg:'ticket not found'})
         }else{
             const ticket = await Ticket.deleteOne({id:req.params.id})
-            res.send({error:true,msg:'ticket deleted',ticket})
+            res.send({error:false,msg:'ticket deleted',ticket})
         }
 
         } catch (error) {
-        
+            res.send({error:true})
     }
 })
 

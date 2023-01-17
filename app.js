@@ -3,6 +3,7 @@ const userauth = require('./routes/userauth');
 const cabdriverauth = require('./routes/vendors');
 const wallet = require('./routes/wallet');
 const ticket = require('./routes/ticket');
+const driver = require('./routes/drivers');
 const morgan = require('morgan');
 const multer = require('multer');
 const upload = multer();
@@ -31,7 +32,7 @@ const PORT = process.env.PORT || 8080;
   app.use('/vendors',cabdriverauth);
   app.use('/wallet',wallet);
   app.use('/ticket',ticket);
-
+  app.use('/driver',driver);
 
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);

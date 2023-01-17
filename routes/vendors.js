@@ -231,5 +231,16 @@ app.get("/transaction-history/:id",async (req, res) => {
     }
 });
 
+app.get("/wallet/:id",async (req, res) => {
+    const id  = req.params.id;
+    const wallet  = await Vendorwallet.findOne({id});
+
+    if(!wallet){
+        res.send({error:true,msg:"Vendor wallet not found"});
+    }else{
+    res.send({error:false,wallet});
+    }
+});
+
 
 module.exports = app;
