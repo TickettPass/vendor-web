@@ -141,7 +141,7 @@ app.delete("/delete/:id",async (req,res) => {
         } catch (error) {
             res.send({error:true})
     }
-})
+});
 
 app.post("/consume/:uc/:id",async (req,res) => {
     try {
@@ -187,24 +187,12 @@ app.post("/consume/:uc/:id",async (req,res) => {
     } catch (error) {
 
     }
-})
+});
 
 app.get("/find/:id",async (req,res) => {
     const id  = req.params.id;
-    const tickets = await Ticket.find({user:id})
+    const tickets = await Ticket.find({uniquecode:id})
     res.send({error:false,tickets})
 });
-
-app.get("/twillio", (req,res) => {
-    console.log("+16516615073");
-
-    client.messages
-      .create({body: 'Hi there', from: '+16516615073', to: '+2349127424777'})
-      .then(message => console.log(message.sid));
-
-      console.log("+16516615073");
-
-      
-})
 
 module.exports = app;
