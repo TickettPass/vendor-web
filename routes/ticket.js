@@ -15,8 +15,11 @@ const Dwallet = require('../model/bowendriverswallet');
 
 
 let app = express.Router();
-const accountSid = 'ACc837fae39258cf7e3ad0c965c7f48bf7';
-const authToken = 'd13339360106662b7a945a4f5a4557e3';
+// const accountSid = 'ACc837fae39258cf7e3ad0c965c7f48bf7';
+// const authToken = 'd13339360106662b7a945a4f5a4557e3';
+
+const accountSid = 'AC948c5eeb7f5e6db18ecd920c12ec24a5';
+const authToken = '63938f09dfba3e30a4ad8bb89630c1a3';
 const client = new twilio(accountSid, authToken);
 
 app.post("/new-meal",async (req,res) => {
@@ -91,7 +94,7 @@ app.post("/new-cab",async (req,res) => {
                 res.send({error:true,msg:'User not found'})
             }else{
                 
-                if(wallet.amount < amount){
+                if(wallet.amount < parseInt(amount)){
                     res.send({error:true,msg:"Insuffient funds"});
                 }else{
                     const ticket = await Ticket.create({
@@ -101,21 +104,16 @@ app.post("/new-cab",async (req,res) => {
                         driver,
                         uniquecode
                     })
-                    const balance = wallet.amount - amount;
+                    const balance = wallet.amount - parseInt(amount);
                     Object.assign(wallet,{amount:balance});
                     wallet.save();
 
-                    const dnumber = await Driver.findOne({ number});
+                    const dnumber = await Driver.findOne({ id:driver });
                     const dwallet = await Dwallet.findOne({ id:dnumber.id });
 
-                    const dbalance = dwallet.amount + amount;
+                    const dbalance = dwallet.amount + parseInt(amount);
                     Object.assign(dwallet,{amount:dbalance});
                     dwallet.save();
-
-                    
-                    client.messages
-                    .create({body:amount+'cab ticket purchased by' + user + 'for mr '+ dnumber.name , from: '+16516615073', to: dnumber.number})
-                    .then(message => console.log(message.sid));
 
                     const transaction = await Transaction.create({
                         user,
@@ -196,5 +194,17 @@ app.get("/find/:id",async (req,res) => {
     const tickets = await Ticket.find({user:id})
     res.send({error:false,tickets})
 });
+
+app.get("/twillio", (req,res) => {
+    console.log("+16516615073");
+
+    client.messages
+      .create({body: 'Hi there', from: '+16516615073', to: '+2349127424777'})
+      .then(message => console.log(message.sid));
+
+      console.log("+16516615073");
+
+      
+})
 
 module.exports = app;

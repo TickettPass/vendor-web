@@ -11,8 +11,11 @@ const Dwallet = require('../model/bowendriverswallet');
 
 
 let app = express.Router();
-const accountSid = 'ACc837fae39258cf7e3ad0c965c7f48bf7';
-const authToken = 'd13339360106662b7a945a4f5a4557e3';
+// const accountSid = 'ACc837fae39258cf7e3ad0c965c7f48bf7';
+// const authToken = 'd13339360106662b7a945a4f5a4557e3';
+
+const accountSid = 'AC948c5eeb7f5e6db18ecd920c12ec24a5';
+const authToken = '63938f09dfba3e30a4ad8bb89630c1a3';
 const client = new twilio(accountSid, authToken);
 
 app.post("/new-driver",async (req, res) => {
