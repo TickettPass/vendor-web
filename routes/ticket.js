@@ -191,8 +191,13 @@ app.post("/consume/:uc/:id",async (req,res) => {
 
 app.get("/find/:id",async (req,res) => {
     const id  = req.params.id;
-    const tickets = await Ticket.find({uniquecode:id})
-    res.send({error:false,tickets})
+    const tickets = await Ticket.findOne({uniquecode:id})
+    if(tickets){
+        res.send({error:false,tickets})
+    }else{
+        res.send({error:true,msg:"Ticket not found"})
+    }
+    
 });
 
 module.exports = app;
