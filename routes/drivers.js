@@ -81,4 +81,20 @@ app.delete("/delete/:id",async (req,res) => {
     }
 });
 
+app.get("/drivers",async (req, res) => {
+    const drivers = await Driver.find();
+    res.send({error:false,drivers});
+});
+
+app.get("/drivers/:id",async (req, res) => {
+    const  id  = req.params.id;
+    const driver  = await Driver.findOne({id});
+
+    if(!driver){
+        res.send({error:true,msg:'driver not found'})
+    }else{
+        res.send({error:false,driver});
+    }
+});
+
 module.exports = app;
