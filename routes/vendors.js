@@ -12,6 +12,7 @@ const twilio = require('twilio');
 const auth = require("../middleware/auth");
 const { make } = require('simple-body-validator');
 const { v4: uuidv4 } = require('uuid');
+const Withdrawal = require("../model/withdrawal")
 
 
 let app = express.Router();
@@ -199,10 +200,18 @@ app.post("/withdraw/:id",auth,async (req, res) => {
         if(!wallet){
             res.send("wallet not found");
         }else{
-            const transaction = await Vtransaction.create({vendor:id,amount,type:"debit"});
-            Object.assign(wallet,{amount:wallet.amount -  amount});
-            wallet.save();
-            res.send({error:false,msg:amount +' withdrawn',wallet});
+
+            if(wallet.amount >=  amount){
+                const transaction = await Vtransaction.create({vendor:id,amount,type:"debit"});
+
+                const withdrawal =  await Withdrawal.create({vendor:id,amount,});
+                res.send({error:false,msg:amount +' withdraw request made',wallet});
+            }
+            
+            
+           
+            
+            
         }
 } 
 });
