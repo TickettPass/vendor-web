@@ -20,6 +20,17 @@ const accountSid = 'AC948c5eeb7f5e6db18ecd920c12ec24a5';
 const authToken = '63938f09dfba3e30a4ad8bb89630c1a3';
 const client = new twilio(accountSid, authToken);
 
+app.get("/user/:number",async (req, res) => {
+    const number = req.params.number;
+    const user = await User.findOne({ number })
+
+    if(user){
+        res.send({error:false,user})
+    }else{
+        res.send({error:true,msg:"User not found"});
+    }
+});
+
 app.post("/login",async (req, res) => {
     
         try {
