@@ -197,7 +197,6 @@ app.get("/find/:id",async (req,res) => {
     }else{
         res.send({error:true,msg:"Ticket not found"})
     }
-    
 });
 
 module.exports = app;

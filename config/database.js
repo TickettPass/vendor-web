@@ -5,7 +5,7 @@ const { MONGO_URI } = process.env;
 exports.connect = () => {
     
   mongoose
-  .connect('mongodb+srv://arabayomi:iijcngetty1997.@cluster0.r5e5uuy.mongodb.net/?retryWrites=true&w=majority', {
+  .connect('mongodb+srv://arabayomi:iijcngetty1997.@cluster0.qmfiwyc.mongodb.net/test', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -14,7 +14,7 @@ exports.connect = () => {
   })
   .catch((error) => {
     console.log("database connection failed. exiting now...");
-    // console.error(error);
+    console.error(error);
     process.exit(1);
   });
 
