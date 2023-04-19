@@ -72,22 +72,28 @@ app.post("/login",async (req, res) => {
 });
 
 
-
+// app.post("/register",async (req, res) => {
+//             const { fullname, username, email,number, password } = req.body;
+//             const existinguser = await User.findOne({ username:username.toLowerCase() });
+//             const uemail = await User.findOne({ email });
+//             console.log(existinguser,uemail)
+// })
 app.post("/register",async (req, res) => {
     try {
-        const rules = {
-            fullname: 'required|string',
-            username: 'required|string',
-            email: 'required|email',
-            number: 'required|string',
-            password: 'required|string',
-        }
+    //     const rules = {
+    //         fullname: 'required|string',
+    //         username: 'required|string',
+    //         email: 'required|email',
+    //         number: 'required|string',
+    //         password: 'required|string',
+    //     }
         
-        const validator = make(req.body, rules);
-        if (!validator.validate()) {
+        // const validator = make(req.body, rules);
+        // if (!validator.validate()) {
             
-            return res.send({errors:validator.errors().all()})
-        }else{
+        //     return res.send({errors:validator.errors().all()})
+        // }else{
+            
             const { fullname, username, email,number, password } = req.body;
             const existinguser = await User.findOne({ username:username.toLowerCase() });
             const uemail = await User.findOne({ email });
@@ -121,10 +127,8 @@ app.post("/register",async (req, res) => {
                     user 	
                     });
 
-            }
-
-            
-        }
+            }            
+        // }
            
     } catch (error) {
         res.send(error);      
@@ -135,14 +139,14 @@ app.post("/register",async (req, res) => {
 app.post("/forgot-password",async (req, res) => {
     try {
 
-        const rules = {
-            number: 'required|string',
-        }
+    //     const rules = {
+    //         number: 'required|string',
+    //     }
 
-        const validator = make(req.body, rules);
-    if (! validator.validate()) {
-        return res.send({errors:validator.errors().all()})
-     }else{
+    //     const validator = make(req.body, rules);
+    // if (! validator.validate()) {
+    //     return res.send({errors:validator.errors().all()})
+    //  }else{
         
         const {number} = req.body;     
         const user = await User.findOne({ number })
@@ -165,7 +169,7 @@ app.post("/forgot-password",async (req, res) => {
                       res.send({error:false,message:`Otp sent to ${number}`,otpstatus:verification.status,token});
                 });    
         }
-     }
+// }
     } catch (error) {
         res.send(error)
     }
@@ -175,15 +179,15 @@ app.post("/verify-otp",auth,async (req, res) => {
     
     try {
 
-        const rules = {
-            number: 'required|string',
-            otp: 'required|string',
-        }
+    //     const rules = {
+    //         number: 'required|string',
+    //         otp: 'required|string',
+    //     }
 
-        const validator = make(req.body, rules);
-    if (! validator.validate()) {
-        return res.send({errors:validator.errors().all()})
-     }else{
+    //     const validator = make(req.body, rules);
+    // if (! validator.validate()) {
+    //     return res.send({errors:validator.errors().all()})
+    //  }else{
         const {number,otp} = req.body;
         if (!(number)) {
             return res.send("Number is required");
@@ -198,7 +202,7 @@ app.post("/verify-otp",auth,async (req, res) => {
                 })
             })
         }
-     }
+    //  }
     } catch (error) {
         
     }
@@ -207,17 +211,17 @@ app.post("/verify-otp",auth,async (req, res) => {
 
 app.post("/update-password",auth,async (req, res) => {
 
-        const rules = {
-            password: 'required|string',
-            rtpassword: 'required|string|same:password',
-            number:'required|string'
-        }
-        const validator = make(req.body, rules);
-        if (! validator.validate()) {
+        // const rules = {
+        //     password: 'required|string',
+        //     rtpassword: 'required|string|same:password',
+        //     number:'required|string'
+        // }
+        // const validator = make(req.body, rules);
+        // if (! validator.validate()) {
 
 
-            return res.send({errors:validator.errors().all()})
-         }else{
+        //     return res.send({errors:validator.errors().all()})
+        //  }else{
             const {password,number} = req.body;
             const encryptedPassword = await bcrypt.hash(password, 10);
             console.log(encryptedPassword,number);
@@ -229,7 +233,7 @@ app.post("/update-password",auth,async (req, res) => {
             res.send({error:false,msg:'password updated',user});
             
 
-         }
+        //  }
    
 });
 

@@ -24,15 +24,15 @@ const client = new twilio(accountSid, authToken);
 
 app.post("/new-meal",async (req,res) => {
 
-        const rules = {
-            user: 'required|string',
-            amount: 'required|string'
-        }
+        // const rules = {
+        //     user: 'required|string',
+        //     amount: 'required|string'
+        // }
 
-        const validator = make(req.body,rules);
-        if (! validator.validate()) {
-            return res.send({errors:validator.errors().all()});
-         }else{
+        // const validator = make(req.body,rules);
+        // if (! validator.validate()) {
+        //     return res.send({errors:validator.errors().all()});
+        //  }else{
 
             const { user,amount } = req.body;
             const uid = new ShortUniqueId({ length: 8 });
@@ -68,21 +68,21 @@ app.post("/new-meal",async (req,res) => {
     
                 }
             }
-         }
+        //  }
 });
 
 app.post("/new-cab",async (req,res) => {
 
-        const rules = {
-            user: 'required|string',
-            driver: 'required|string',
-            amount: 'required|string'
-        }
+        // const rules = {
+        //     user: 'required|string',
+        //     driver: 'required|string',
+        //     amount: 'required|string'
+        // }
 
-        const validator = make(req.body,rules);
-        if (! validator.validate()) {
-            return res.send({errors:validator.errors().all()});
-         }else{
+        // const validator = make(req.body,rules);
+        // if (! validator.validate()) {
+        //     return res.send({errors:validator.errors().all()});
+        //  }else{
             console.log('for uniquesness');
             const { user,amount,driver } = req.body;
             const uid = new ShortUniqueId({ length: 8 });
@@ -125,7 +125,7 @@ app.post("/new-cab",async (req,res) => {
     
                 }
             }
-         }
+        //  }
 });
 
 app.delete("/delete/:id",async (req,res) => {

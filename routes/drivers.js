@@ -20,16 +20,16 @@ const client = new twilio(accountSid, authToken);
 
 app.post("/new-driver",async (req, res) => {
     try {
-        const rules = {
-            name: 'required|string',
-            number: 'required|string'
-        }
+        // const rules = {
+        //     name: 'required|string',
+        //     number: 'required|string'
+        // }
 
-        const validator = make(req.body, rules);
-        if (!validator.validate()) {
+        // const validator = make(req.body, rules);
+        // if (!validator.validate()) {
             
-            return res.send({errors:validator.errors().all()})
-        }else{
+        //     return res.send({errors:validator.errors().all()})
+        // }else{
 
             const { name,number } = req.body;
 
@@ -58,7 +58,7 @@ app.post("/new-driver",async (req, res) => {
                     driver 	
                     });
             }
-        }
+        // }
     } catch (error) {
         
     }

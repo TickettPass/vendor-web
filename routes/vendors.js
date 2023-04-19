@@ -22,17 +22,17 @@ const client = new twilio(accountSid, authToken);
 
 app.post("/register",async (req, res) => {
    
-        const rules = {
-            name: 'required|string',
-            type: 'required|string',
-            number: 'required|string',
-            password: 'required|string',
-        }
+        // const rules = {
+        //     name: 'required|string',
+        //     type: 'required|string',
+        //     number: 'required|string',
+        //     password: 'required|string',
+        // }
         
-        const validator = make(req.body, rules);
-        if (!validator.validate()) {
-            return res.send({errors:validator.errors().all()});
-        }else{
+        // const validator = make(req.body, rules);
+        // if (!validator.validate()) {
+        //     return res.send({errors:validator.errors().all()});
+        // }else{
             const { name, type,number, password } = req.body;
             const existingvendor = await Vendor.findOne({ number });
             if (existingvendor) {              
@@ -59,22 +59,22 @@ app.post("/register",async (req, res) => {
                     });
 
             } 
-        }
+        // }
 
 });
 
 
 app.post("/login",async (req, res) => {
     
-        const rules = {
-            number: 'required|string',
-            password: 'required|string'
-        }           
+    //     const rules = {
+    //         number: 'required|string',
+    //         password: 'required|string'
+    //     }           
 
-        const validator = make(req.body, rules);
-    if (! validator.validate()) {
-        return res.send({errors:validator.errors().all()})
-     }else{
+    //     const validator = make(req.body, rules);
+    // if (! validator.validate()) {
+    //     return res.send({errors:validator.errors().all()})
+    //  }else{
         const { number, password } = req.body;
         const vendor = await Vendor.findOne({ number });
         
@@ -98,17 +98,17 @@ app.post("/login",async (req, res) => {
             res.status(400).send({error:true,msg:"Vendor not found"});
           }
 
-     }  
+    //  }  
 });
 
 app.post("/forgot-password",async (req, res) => {
-        const rules = {
-            number: 'required|string'
-        }
-        const validator = make(req.body, rules);
-    if (! validator.validate()) {
-        return res.send({errors:validator.errors().all()})
-     }else{
+    //     const rules = {
+    //         number: 'required|string'
+    //     }
+    //     const validator = make(req.body, rules);
+    // if (! validator.validate()) {
+    //     return res.send({errors:validator.errors().all()})
+    //  }else{
         const {number} = req.body;     
         const vendor = await Vendor.findOne({ number });
         if (vendor == null) {
@@ -128,20 +128,20 @@ app.post("/forgot-password",async (req, res) => {
                       res.send({error:false,message:`Otp sent to ${number}`,otpstatus:verification.status,token});
                 });    
         }
-     }
+    //  }
 });
 
 app.post("/verify-otp",auth,async (req, res) => {
 
-        const rules = {
-            number: 'required|string',
-            otp: 'required|string',
-        }
+    //     const rules = {
+    //         number: 'required|string',
+    //         otp: 'required|string',
+    //     }
 
-        const validator = make(req.body, rules);
-    if (! validator.validate()) {
-        return res.send({errors:validator.errors().all()})
-     }else{
+    //     const validator = make(req.body, rules);
+    // if (! validator.validate()) {
+    //     return res.send({errors:validator.errors().all()})
+    //  }else{
         const {number,otp} = req.body;
         if (!(number)) {
             return res.send("Number is required");
@@ -156,21 +156,21 @@ app.post("/verify-otp",auth,async (req, res) => {
                 })
             })
         }
-     }
+    //  }
 
 });
 
 app.post("/update-password",auth,async (req, res) => {
 
-        const rules = {
-            password: 'required|string',
-            rtpassword: 'required|string|same:password',
-            number:'required|string'
-        }
-        const validator = make(req.body, rules);
-        if (! validator.validate()) {
-            return res.send({errors:validator.errors().all()});
-         }else{
+        // const rules = {
+        //     password: 'required|string',
+        //     rtpassword: 'required|string|same:password',
+        //     number:'required|string'
+        // }
+        // const validator = make(req.body, rules);
+        // if (! validator.validate()) {
+        //     return res.send({errors:validator.errors().all()});
+        //  }else{
             const {password,number} = req.body;
             const encryptedPassword = await bcrypt.hash(password, 10);
             
@@ -179,19 +179,19 @@ app.post("/update-password",auth,async (req, res) => {
             
             vendor.save();
             res.send({error:false,msg:'password updated',vendor});
-} 
+// } 
 });
 
 app.post("/withdraw/:id",auth,async (req, res) => {
 
-    const rules = {
-        amount: 'required|string',
+    // const rules = {
+    //     amount: 'required|string',
         
-    }
-    const validator = make(req.body, rules);
-    if (! validator.validate()) {
-        return res.send({errors:validator.errors().all()});
-     }else{
+    // }
+    // const validator = make(req.body, rules);
+    // if (! validator.validate()) {
+    //     return res.send({errors:validator.errors().all()});
+    //  }else{
         const {amount} = req.body;
         const id = req.params.id;
 
@@ -212,7 +212,7 @@ app.post("/withdraw/:id",auth,async (req, res) => {
            
             
             
-        }
+        // }
 } 
 });
 
