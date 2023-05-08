@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 
 const ticketSchema = new mongoose.Schema({
   user: { type: String},
-  amount: { type: String},
-  purpose: { type: String},
+  amount: { type: Number},
+  purpose: {type:String,required: true},
   uniquecode: { type: String},
-  status: { type: String, default: "pending"},
+  status: { type: Boolean, default: false},
   datecreated:{ type: Date, default: Date.now()}
 },
 {

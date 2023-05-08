@@ -32,7 +32,7 @@ const PORT = process.env.PORT || 8080;
   app.use('/vendors',cabdriverauth);
   app.use('/wallet',wallet);
   app.use('/ticket',ticket);
-  app.use('/driver',driver);
+  app.use('/drivers',driver);
 
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);

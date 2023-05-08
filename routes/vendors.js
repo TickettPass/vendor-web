@@ -1,11 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const User = require("../model/user");
-const Vendorwallet = require("../model/vendorwallet");
-const Vtransaction = require("../model/vendortransactions");
 const Vendor = require("../model/vendors")
 const Ticket = require("../model/tickets");
-const cTicket = require("../model/consumedtickets")
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const twilio = require('twilio');
@@ -22,31 +19,28 @@ const client = new twilio(accountSid, authToken);
 
 app.post("/register",async (req, res) => {
    
-        // const rules = {
-        //     name: 'required|string',
-        //     type: 'required|string',
-        //     number: 'required|string',
-        //     password: 'required|string',
-        // }
+        const rules = {
+            name: 'required|string',
+            number: 'required|string',
+            password: 'required|string',
+        }
         
-        // const validator = make(req.body, rules);
-        // if (!validator.validate()) {
-        //     return res.send({errors:validator.errors().all()});
-        // }else{
-            const { name, type,number, password } = req.body;
+        const validator = make(req.body, rules);
+        if (!validator.validate()) {
+            return res.send({errors:validator.errors().all()});
+        }else{
+            const { name,number, password } = req.body;
             const existingvendor = await Vendor.findOne({ number });
             if (existingvendor) {              
-                    return res.status(409).send({error:true,msg:"Vendor already exists"});
+                    return res.status(409).send({error:true,msg:"Number already exists"});
                 
             }else{
                 var vendor_id = uuidv4();
-                const wallet = await Vendorwallet.create({id:vendor_id})
     
                 const encryptedPassword = await bcrypt.hash(password, 10);
                 const vendor = await Vendor.create({
                     id:vendor_id,
                     name,
-                    type,
                     password: encryptedPassword,
                     number
                   });
@@ -59,22 +53,22 @@ app.post("/register",async (req, res) => {
                     });
 
             } 
-        // }
+        }
 
 });
 
 
 app.post("/login",async (req, res) => {
     
-    //     const rules = {
-    //         number: 'required|string',
-    //         password: 'required|string'
-    //     }           
+        const rules = {
+            number: 'required|string',
+            password: 'required|string'
+        }           
 
-    //     const validator = make(req.body, rules);
-    // if (! validator.validate()) {
-    //     return res.send({errors:validator.errors().all()})
-    //  }else{
+        const validator = make(req.body, rules);
+    if (! validator.validate()) {
+        return res.send({errors:validator.errors().all()})
+     }else{
         const { number, password } = req.body;
         const vendor = await Vendor.findOne({ number });
         
@@ -98,158 +92,72 @@ app.post("/login",async (req, res) => {
             res.status(400).send({error:true,msg:"Vendor not found"});
           }
 
-    //  }  
+     }  
 });
 
-app.post("/forgot-password",async (req, res) => {
-    //     const rules = {
-    //         number: 'required|string'
-    //     }
-    //     const validator = make(req.body, rules);
-    // if (! validator.validate()) {
-    //     return res.send({errors:validator.errors().all()})
-    //  }else{
-        const {number} = req.body;     
-        const vendor = await Vendor.findOne({ number });
-        if (vendor == null) {
-          return res.status(409).send({
-            error:true,
-            msg:"Number dosent exist"
-            });
-        }else{
-            client.verify.v2.services('VAd5a15a4abce077331500ee4354f8012c')
-            .verifications
-            .create({to: `+234${number}`, channel: 'sms'})
-            .then((verification) =>{
-                    const token = jwt.sign(
-                        { number },
-                        process.env.TOKEN_KEY
-                      );
-                      res.send({error:false,message:`Otp sent to ${number}`,otpstatus:verification.status,token});
-                });    
-        }
-    //  }
-});
+// 
 
-app.post("/verify-otp",auth,async (req, res) => {
+// app.post("/update-password",auth,async (req, res) => {
 
-    //     const rules = {
-    //         number: 'required|string',
-    //         otp: 'required|string',
-    //     }
-
-    //     const validator = make(req.body, rules);
-    // if (! validator.validate()) {
-    //     return res.send({errors:validator.errors().all()})
-    //  }else{
-        const {number,otp} = req.body;
-        if (!(number)) {
-            return res.send("Number is required");
-        }else{
-            client.verify.v2.services('VAd5a15a4abce077331500ee4354f8012c')
-            .verificationChecks
-            .create({to: `+234${number}`, code: otp})
-            .then(verification_check =>{
-                res.send({
-                    error:false,
-                    status:verification_check.status
-                })
-            })
-        }
-    //  }
-
-});
-
-app.post("/update-password",auth,async (req, res) => {
-
-        // const rules = {
-        //     password: 'required|string',
-        //     rtpassword: 'required|string|same:password',
-        //     number:'required|string'
-        // }
-        // const validator = make(req.body, rules);
-        // if (! validator.validate()) {
-        //     return res.send({errors:validator.errors().all()});
-        //  }else{
-            const {password,number} = req.body;
-            const encryptedPassword = await bcrypt.hash(password, 10);
+//         const rules = {
+//             password: 'required|string',
+//             rtpassword: 'required|string|same:password',
+//             number:'required|string'
+//         }
+//         const validator = make(req.body, rules);
+//         if (! validator.validate()) {
+//             return res.send({errors:validator.errors().all()});
+//          }else{
+//             const {password,number} = req.body;
+//             const encryptedPassword = await bcrypt.hash(password, 10);
             
-           const vendor = await Vendor.findOne({ number:number });
-            Object.assign(vendor,{password:encryptedPassword});
+//            const vendor = await Vendor.findOne({ number:number });
+//             Object.assign(vendor,{password:encryptedPassword});
             
-            vendor.save();
-            res.send({error:false,msg:'password updated',vendor});
+//             vendor.save();
+//             res.send({error:false,msg:'password updated',vendor});
 // } 
-});
+// });
 
 app.post("/withdraw/:id",auth,async (req, res) => {
 
-    // const rules = {
-    //     amount: 'required|string',
+    const rules = {
+        amount: 'required|string',
         
-    // }
-    // const validator = make(req.body, rules);
-    // if (! validator.validate()) {
-    //     return res.send({errors:validator.errors().all()});
-    //  }else{
+    }
+    const validator = make(req.body, rules);
+    if (! validator.validate()) {
+        return res.send({errors:validator.errors().all()});
+     }else{
         const {amount} = req.body;
         const id = req.params.id;
 
-        const wallet = await Vendorwallet.findOne({id});
+        const vendor = await Vendor.findOne({id});
 
-        if(!wallet){
-            res.send("wallet not found");
+        if(!vendor){
+            res.send("Vendor not found");
         }else{
 
-            if(wallet.amount >=  amount){
-                const transaction = await Vtransaction.create({vendor:id,amount,type:"debit"});
+            if(vendor.wallet >=  amount){
+                
 
+                Object.assign(vendor,{wallet:amount+vendor.wallet});
+                vendor.save();
                 const withdrawal =  await Withdrawal.create({vendor:id,amount,});
-                res.send({error:false,msg:amount +' withdraw request made',wallet});
+                res.status(200).send({error:true,msg:"Withdrawal Pending"})
+                
+            }else{
+                res.send({error:true,msg:' insuffieicnt funds'});
             }
             
             
            
             
             
-        // }
+        }
 } 
 });
 
-app.get("/ticket-history/:id",async (req, res) => {
-
-        const  id  = req.params.id;
-        const vendor  = await Vendor.findOne({consumedby:id});
-        if(!vendor){
-            res.send({error:true,msg:"Vendor not found"});
-        }else{
-        const tickets = await cTicket.find({consumedby:id});
-        res.send({error:false,tickets});
-        }
-});
-
-app.get("/transaction-history/:id",async (req, res) => {
-    const id  = req.params.id;
-    const vendor  = await Vendor.findOne({id});
-    console.log(id);
-    if(!vendor){
-        res.send({error:true,msg:"Vendor not found",id});
-    }else{
-    const transactions = await Vtransaction.find({vendor:id});
-    res.send({error:false,transactions});
-    }
-});
-
-app.get("/wallet/:id",async (req, res) => {
-    const id  = req.params.id;
-    const wallet  = await Vendorwallet.findOne({id});
-
-    if(!wallet){
-        res.send({error:true,msg:"Vendor wallet not found"});
-    }else{
-    res.send({error:false,wallet});
-    }
-});
 
 
 module.exports = app;
