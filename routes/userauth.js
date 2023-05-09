@@ -134,6 +134,18 @@ app.post("/register",async (req, res) => {
     }
 });
 
+app.get("/find/:id",async (req,res) => {
+    try {
+        const id = req.params.is
+        const user = await User.findOne({ id });
+        res.send({error:false,user});
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({msg:"internal server error"});
+    }
+
+});
+
 
 // app.post("/forgot-password",async (req, res) => {
 //     try {
