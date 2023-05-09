@@ -28,9 +28,8 @@ app.post("/payment",async (req,res) => {
     });   
 });
  
-app.get("/topup",async (req,res) => {
+app.post("/topup",async (req,res) => {
     //verify transaction
-
     const { id } = req.body;
     request.get(`https://api.paystack.co/transaction/verify/${id}`, { 
   'auth': {
