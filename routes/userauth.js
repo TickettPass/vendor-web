@@ -136,7 +136,7 @@ app.post("/register",async (req, res) => {
 
 app.get("/find/:id",async (req,res) => {
     try {
-        const id = req.params.is
+        const id = req.params.id
         const user = await User.findOne({ id });
         res.send({error:false,user});
     } catch (error) {
