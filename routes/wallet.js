@@ -3,7 +3,7 @@ const express = require('express');
 const { make } = require('simple-body-validator');
 const twilio = require('twilio');
 const auth = require("../middleware/auth");
-const deposit = require("../model/deposits");
+const Deposit = require("../model/deposits");
 const request = require('request');
 require('dotenv').config();
 
