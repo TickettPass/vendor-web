@@ -93,10 +93,10 @@ app.get("/all",async (req, res) => {
 
 });
 
-app.get("/single",async (req, res) => {
+app.get("/single/:number",async (req, res) => {
 
     try {
-        const { number } = req.body;
+        const  number  = req.params.number;
         const driver  = await Driver.findOne({number});
     
         if(!driver){
