@@ -47,24 +47,26 @@ app.post("/topup",async (req,res) => {
             const user = await User.findOne({ email:info.data.customer.email });
             if(user){
                 
-                Object.assign(user,{wallet:user.wallet + info.data.amount/100});
+
+                walletamount = info.data.amount/100
+                Object.assign(user,{wallet:user.wallet + walletamount});
                 
                 
                 const deposit = await Deposit.create({
                     user:user.id,
-                    amount:info.data.amount,
+                    amount:walletamount,
                     type:'credit',
                     reference:req.params.id
                 });
                 const transaction  = {
-                    amount:info.data.amount,
+                    amount:walletamount,
                     type:'credit',
                 }
                 user.transactions.push(transaction);
 
                 user.save();
 
-                res.send({error:false,msg:`${info.data.amount} added to ${user.id}`,deposit});
+                res.send({error:false,msg:`${walletamount} added to ${user.id}`,deposit});
             }else{
                 res.send({error:true,msg:"User not found"});
             }
