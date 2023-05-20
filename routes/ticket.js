@@ -212,14 +212,11 @@ app.delete("/delete/:uniquecode",async (req,res) => {
             Object.assign(userToUpdate,{tickets:updatedTickets});
             userToUpdate.save();
 
-            
-
-
             res.send({error:false,msg:'ticket deleted',ticket});
         }
 
         } catch (error) {
-            res.send({error:true})
+            res.status(500).send({error:true})
     }
 });
 
