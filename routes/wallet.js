@@ -14,8 +14,7 @@ app.post("/payment",async (req,res) => {
 
     const { amount, email} = req.body;
     
-    amountinnaira = parseInt(amount)*100;
-    const body  = JSON.stringify({amountinnaira,email,callback_url:'https://e-waste-e8125.web.app/'});
+    const body  = JSON.stringify({amount,email,callback_url:'https://e-waste-e8125.web.app/'});
       request.post('https://api.paystack.co/transaction/initialize', {
         	'auth': {
             'bearer': 'sk_test_e3d31ea7f6fe860ecca346739d8d4b27659e7728'
